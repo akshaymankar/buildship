@@ -14,17 +14,15 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.gradleware.tooling.toolingmodel.repository.FixedRequestAttributes;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.buildship.core.CorePlugin;
 import org.eclipse.buildship.core.configuration.GradleProjectNature;
 import org.eclipse.buildship.core.configuration.ProjectConfiguration;
-import org.eclipse.buildship.core.workspace.CompositeGradleBuild;
+import org.eclipse.buildship.core.workspace.OldGradleBuild;
 import org.eclipse.buildship.core.workspace.GradleBuild;
 import org.eclipse.buildship.core.workspace.GradleWorkspaceManager;
 
@@ -36,24 +34,18 @@ import org.eclipse.buildship.core.workspace.GradleWorkspaceManager;
 public class DefaultGradleWorkspaceManager implements GradleWorkspaceManager {
 
     @Override
-    public GradleBuild getGradleBuild(FixedRequestAttributes attributes) {
-        return new DefaultGradleBuild(attributes);
+    public OldGradleBuild getOldGradleBuild(FixedRequestAttributes attributes) {
+        return new DefaultOldGradleBuild(attributes);
     }
 
     @Override
-    public Optional<GradleBuild> getGradleBuild(IProject project) {
+    public Optional<OldGradleBuild> getOldGradleBuild(IProject project) {
         Set<FixedRequestAttributes> builds = getBuilds(ImmutableSet.of(project));
         if (builds.isEmpty()) {
             return Optional.absent();
         } else {
-            return Optional.of(getGradleBuild(builds.iterator().next()));
+            return Optional.of(getOldGradleBuild(builds.iterator().next()));
         }
-    }
-
-    @Override
-    public CompositeGradleBuild getCompositeBuild() {
-        Set<IProject> allProjects = Sets.newHashSet(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-        return new DefaultCompositeGradleBuild(getBuilds(allProjects));
     }
 
     private Set<FixedRequestAttributes> getBuilds(Set<IProject> projects) {
@@ -65,6 +57,21 @@ public class DefaultGradleWorkspaceManager implements GradleWorkspaceManager {
                 return configuration.isPresent() ? configuration.get().toRequestAttributes() : null;
             }
         }).filter(Predicates.notNull()).toSet();
+    }
+
+    @Override
+    public GradleBuild getGradleBuild(FixedRequestAttributes attributes) {
+        return new DefaultGradleBuild(attributes);
+    }
+
+    @Override
+    public Optional<GradleBuild> getGradleBuild(IProject project) {
+        Optional<ProjectConfiguration> configuration = CorePlugin.projectConfigurationManager().tryReadProjectConfiguration(project);
+        if (configuration.isPresent()) {
+            return Optional.<GradleBuild>of(new DefaultGradleBuild(configuration.get().toRequestAttributes()));
+        } else {
+            return Optional.absent();
+        }
     }
 
 }

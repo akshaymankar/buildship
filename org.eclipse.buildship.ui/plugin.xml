@@ -115,7 +115,7 @@
             description="Runs all the selected Gradle tasks">
       </command>
       <command
-            id="org.eclipse.buildship.ui.commands.rundefaulttasks"
+            id="org.eclipse.buildship.ui.commands.rundefaulttasks" 
             categoryId="org.eclipse.debug.ui.category.run"
             name="Run Gradle Default Tasks"
             description="Runs the default tasks of the selected Gradle project">
@@ -135,8 +135,8 @@
       <command
             id="org.eclipse.buildship.ui.commands.refreshproject"
             categoryId="org.eclipse.buildship.ui.project"
-            name="Refresh all Gradle Projects"
-            description="Refreshes all Gradle projects in the workspace">
+            name="Refresh Gradle Project"
+            description="Refreshes selected Gradle projects">
       </command>
       <command
             id="org.eclipse.buildship.ui.commands.addbuildshipnature"

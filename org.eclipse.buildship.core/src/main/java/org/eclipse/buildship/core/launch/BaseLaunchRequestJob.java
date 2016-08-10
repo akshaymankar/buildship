@@ -43,7 +43,7 @@ import org.eclipse.buildship.core.util.file.FileUtils;
 import org.eclipse.buildship.core.util.gradle.GradleDistributionFormatter;
 import org.eclipse.buildship.core.util.progress.DelegatingProgressListener;
 import org.eclipse.buildship.core.util.progress.ToolingApiJob;
-import org.eclipse.buildship.core.workspace.ModelProvider;
+import org.eclipse.buildship.core.workspace.OldModelProvider;
 
 /**
  * Base class to execute {@link SingleBuildRequest} instances in job.
@@ -136,7 +136,7 @@ public abstract class BaseLaunchRequestJob extends ToolingApiJob {
     }
 
     private OmniBuildEnvironment fetchBuildEnvironment(FixedRequestAttributes fixedRequestAttributes, IProgressMonitor monitor) {
-        ModelProvider modelProvider = CorePlugin.gradleWorkspaceManager().getGradleBuild(fixedRequestAttributes).getModelProvider();
+        OldModelProvider modelProvider = CorePlugin.gradleWorkspaceManager().getOldGradleBuild(fixedRequestAttributes).getModelProvider();
         return modelProvider.fetchBuildEnvironment(FetchStrategy.FORCE_RELOAD, getToken(), monitor);
     }
 

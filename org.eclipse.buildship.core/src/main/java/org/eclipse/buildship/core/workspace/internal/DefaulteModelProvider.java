@@ -19,18 +19,18 @@ import com.gradleware.tooling.toolingmodel.repository.FetchStrategy;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.buildship.core.workspace.CompositeModelProvider;
+import org.eclipse.buildship.core.workspace.ModelProvider;
 
 /**
- * Default implementation of {@link CompositeModelProvider}.
+ * Default implementation of {@link ModelProvider}.
  *
  * @author Stefan Oehme
  */
-final class DefaultCompositeModelprovider extends AbstractModelProvider implements CompositeModelProvider {
+final class DefaulteModelProvider extends AbstractModelProvider implements ModelProvider {
 
     private final CompositeBuildModelRepository modelRepository;
 
-    public DefaultCompositeModelprovider(CompositeBuildModelRepository modelRepository) {
+    public DefaulteModelProvider(CompositeBuildModelRepository modelRepository) {
         this.modelRepository = Preconditions.checkNotNull(modelRepository);
     }
 

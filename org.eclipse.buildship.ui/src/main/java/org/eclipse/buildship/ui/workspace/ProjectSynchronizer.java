@@ -16,9 +16,12 @@ package org.eclipse.buildship.ui.workspace;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import com.gradleware.tooling.toolingmodel.repository.FixedRequestAttributes;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFile;
@@ -32,7 +35,9 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.buildship.core.CorePlugin;
 import org.eclipse.buildship.core.configuration.GradleProjectNature;
+import org.eclipse.buildship.core.configuration.ProjectConfiguration;
 import org.eclipse.buildship.core.util.collections.AdapterFunction;
+import org.eclipse.buildship.core.workspace.GradleBuild;
 import org.eclipse.buildship.core.workspace.NewProjectHandler;
 
 /**
@@ -48,7 +53,21 @@ public final class ProjectSynchronizer {
         if (selectedProjects.isEmpty()) {
             return;
         }
-        CorePlugin.gradleWorkspaceManager().getCompositeBuild().synchronize(NewProjectHandler.IMPORT_AND_MERGE);
+
+        Set<FixedRequestAttributes> builds = Sets.newLinkedHashSet();
+        for (IProject selecteProject : selectedProjects) {
+            if (GradleProjectNature.isPresentOn(selecteProject)) {
+                Optional<ProjectConfiguration> configuration = CorePlugin.projectConfigurationManager().tryReadProjectConfiguration(selecteProject);
+                if (configuration.isPresent()) {
+                    builds.add(configuration.get().toRequestAttributes());
+                }
+            }
+        }
+
+        for (FixedRequestAttributes build : builds) {
+            GradleBuild gradleBuild = CorePlugin.gradleWorkspaceManager().getGradleBuild(build);
+            gradleBuild.synchronize(NewProjectHandler.IMPORT_AND_MERGE);
+        }
     }
 
     private static Set<IProject> collectSelectedProjects(ExecutionEvent event) {

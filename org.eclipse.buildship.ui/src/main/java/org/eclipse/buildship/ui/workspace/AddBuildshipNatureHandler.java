@@ -32,7 +32,7 @@ import org.eclipse.buildship.core.CorePlugin;
 import org.eclipse.buildship.core.configuration.GradleProjectNature;
 import org.eclipse.buildship.core.configuration.WorkspaceConfiguration;
 import org.eclipse.buildship.core.util.collections.AdapterFunction;
-import org.eclipse.buildship.core.workspace.CompositeGradleBuild;
+import org.eclipse.buildship.core.workspace.GradleBuild;
 import org.eclipse.buildship.core.workspace.DelegatingNewProjectHandler;
 import org.eclipse.buildship.core.workspace.NewProjectHandler;
 
@@ -73,19 +73,18 @@ public class AddBuildshipNatureHandler extends AbstractHandler {
     }
 
     private void synchronize(Set<FixedRequestAttributes> builds) {
-        CompositeGradleBuild compositeBuild = CorePlugin.gradleWorkspaceManager().getCompositeBuild();
-        final Set<File> projectDirectories = Sets.newHashSet();
-        for (FixedRequestAttributes build : builds) {
-            compositeBuild = compositeBuild.withBuild(build);
-            projectDirectories.add(build.getProjectDir());
-        }
-        compositeBuild.synchronize(new DelegatingNewProjectHandler(NewProjectHandler.IMPORT_AND_MERGE) {
+        for (final FixedRequestAttributes build : builds) {
+            GradleBuild gradleBuild = CorePlugin.gradleWorkspaceManager().getGradleBuild(build);
+            final Set<File> projectDirectories = Sets.newHashSet();
 
-            @Override
-            public boolean shouldImport(OmniEclipseProject projectModel) {
-                return projectDirectories.contains(projectModel.getRoot().getProjectDirectory());
-            }
-        });
+            gradleBuild.synchronize(new DelegatingNewProjectHandler(NewProjectHandler.IMPORT_AND_MERGE) {
+
+                @Override
+                public boolean shouldImport(OmniEclipseProject projectModel) {
+                    return projectDirectories.contains(projectModel.getRoot().getProjectDirectory());
+                }
+            });
+        }
     }
 
 }

@@ -20,18 +20,18 @@ import com.gradleware.tooling.toolingmodel.repository.SingleBuildModelRepository
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.buildship.core.workspace.ModelProvider;
+import org.eclipse.buildship.core.workspace.OldModelProvider;
 
 /**
- * {@link ModelProvider} implementation backed by a {@link SingleBuildModelRepository}.
+ * {@link OldModelProvider} implementation backed by a {@link SingleBuildModelRepository}.
  *
  * @author Stefan Oehme
  */
-final class DefaultModelprovider extends AbstractModelProvider implements ModelProvider {
+final class DefaultOldModelprovider extends AbstractModelProvider implements OldModelProvider {
 
     private final SingleBuildModelRepository repository;
 
-    DefaultModelprovider(SingleBuildModelRepository repository) {
+    DefaultOldModelprovider(SingleBuildModelRepository repository) {
         this.repository = Preconditions.checkNotNull(repository);
     }
 
