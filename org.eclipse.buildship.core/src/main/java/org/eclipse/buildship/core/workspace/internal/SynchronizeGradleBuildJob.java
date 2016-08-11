@@ -23,13 +23,10 @@ import com.google.common.collect.Sets;
 import com.gradleware.tooling.toolingmodel.OmniEclipseProject;
 import com.gradleware.tooling.toolingmodel.repository.FetchStrategy;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.JavaCore;
 
 import org.eclipse.buildship.core.AggregateException;
 import org.eclipse.buildship.core.CorePlugin;
@@ -68,15 +65,8 @@ final class SynchronizeGradleBuildJob extends ToolingApiJob {
         this.initializer.run(progress.newChild(1), getToken());
         final Set<OmniEclipseProject> allProjects = fetchEclipseProjects(progress.newChild(1));
 
-        JavaCore.run(new IWorkspaceRunnable() {
-
-            @Override
-            public void run(IProgressMonitor monitor) throws CoreException {
-                new SynchronizeGradleBuildOperation(allProjects, SynchronizeGradleBuildJob.this.build.getBuild(), SynchronizeGradleBuildJob.this.newProjectHandler).run(progress.newChild(1));
-
-            }
-        }, monitor);
-
+        new SynchronizeGradleBuildOperation(allProjects, SynchronizeGradleBuildJob.this.build.getBuild(), SynchronizeGradleBuildJob.this.newProjectHandler)
+            .run(progress.newChild(1));
     }
 
     private Set<OmniEclipseProject> fetchEclipseProjects(SubMonitor progress) {
