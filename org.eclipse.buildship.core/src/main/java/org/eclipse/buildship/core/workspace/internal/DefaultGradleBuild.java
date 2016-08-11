@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.gradleware.tooling.toolingmodel.repository.CompositeBuildModelRepository;
 import com.gradleware.tooling.toolingmodel.repository.FixedRequestAttributes;
+import com.gradleware.tooling.toolingmodel.repository.SingleBuildModelRepository;
 
 import org.eclipse.buildship.core.CorePlugin;
 import org.eclipse.buildship.core.util.progress.AsyncHandler;
@@ -49,8 +50,9 @@ public class DefaultGradleBuild implements GradleBuild {
 
     @Override
     public ModelProvider getModelProvider() {
-        CompositeBuildModelRepository modelRepository = CorePlugin.modelRepositoryProvider().getCompositeModelRepository(ImmutableSet.of(this.build));
-        return new DefaultModelProvider(modelRepository);
+        SingleBuildModelRepository singleModelRepository = CorePlugin.modelRepositoryProvider().getModelRepository(this.build);
+        CompositeBuildModelRepository compositeModelRepository = CorePlugin.modelRepositoryProvider().getCompositeModelRepository(ImmutableSet.of(this.build));
+        return new DefaultModelProvider(singleModelRepository, compositeModelRepository);
     }
 
     FixedRequestAttributes getBuild() {

@@ -22,25 +22,22 @@ import org.eclipse.core.resources.IProject;
 public interface GradleWorkspaceManager {
 
     /**
-     * Returns the {@link OldGradleBuild} represented by the given request attributes.
+     * Returns the {@link GradleBuild} represented by the given request attributes.
      *
      * @param attributes the request attributes, must not be null
      * @return the Gradle build, never null
      */
-    public OldGradleBuild getOldGradleBuild(FixedRequestAttributes attributes);
+
+    public GradleBuild getGradleBuild(FixedRequestAttributes attributes);
 
     /**
-     * Returns the {@link OldGradleBuild} that contains the given project.
+     * Returns the {@link GradleBuild} that contains the given project.
      * <p/>
      * If the given project is not a Gradle project, {@link Optional#absent()} is returned.
      *
      * @param project the project, must not be null
      * @return the Gradle build or {@link Optional#absent()}
      */
-    public Optional<OldGradleBuild> getOldGradleBuild(IProject project);
-
-    public GradleBuild getGradleBuild(FixedRequestAttributes attributes);
-
     public Optional<GradleBuild> getGradleBuild(IProject project);
 
 }
