@@ -46,6 +46,8 @@ import org.eclipse.buildship.core.workspace.NewProjectHandler;
 public final class ProjectSynchronizer {
 
     public static void execute(final ExecutionEvent event) {
+        // TODO (donat) add a small job here and call GynchronizeGradleBuildOperations for each selected projects
+
         Set<IProject> selectedProjects = collectSelectedProjects(event);
         if (selectedProjects.isEmpty()) {
             return;
