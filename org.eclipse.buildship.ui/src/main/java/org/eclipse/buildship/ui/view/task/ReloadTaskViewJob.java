@@ -10,29 +10,22 @@ package org.eclipse.buildship.ui.view.task;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.connection.ModelResult;
 import org.gradle.tooling.connection.ModelResults;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.gradleware.tooling.toolingmodel.OmniEclipseProject;
 import com.gradleware.tooling.toolingmodel.repository.FetchStrategy;
-import com.gradleware.tooling.toolingmodel.repository.FixedRequestAttributes;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.buildship.core.CorePlugin;
-import org.eclipse.buildship.core.configuration.GradleProjectNature;
 import org.eclipse.buildship.core.configuration.ProjectConfiguration;
 import org.eclipse.buildship.core.util.progress.ToolingApiJob;
 import org.eclipse.buildship.core.workspace.GradleBuild;
@@ -68,21 +61,9 @@ final class ReloadTaskViewJob extends ToolingApiJob {
 
     private List<OmniEclipseProject> loadProjects(IProgressMonitor monitor) {
         List<OmniEclipseProject> projects = Lists.newArrayList();
-        IProject[] p = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 
-
-        Set<FixedRequestAttributes> builds = Sets.newLinkedHashSet();
-        for (IProject selecteProject : p) {
-            if (GradleProjectNature.isPresentOn(selecteProject)) {
-                Optional<ProjectConfiguration> configuration = CorePlugin.projectConfigurationManager().tryReadProjectConfiguration(selecteProject);
-                if (configuration.isPresent()) {
-                    builds.add(configuration.get().toRequestAttributes());
-                }
-            }
-        }
-
-        for (FixedRequestAttributes build : builds) {
-            GradleBuild gradleBuild = CorePlugin.gradleWorkspaceManager().getGradleBuild(build);
+        for (ProjectConfiguration configuration : CorePlugin.projectConfigurationManager().getRootProjectConfigurations()) {
+            GradleBuild gradleBuild = CorePlugin.gradleWorkspaceManager().getGradleBuild(configuration.toRequestAttributes());
             ModelResults<OmniEclipseProject> results = gradleBuild.getModelProvider().fetchEclipseProjects(this.modelFetchStrategy, getToken(), monitor);
             for (ModelResult<OmniEclipseProject> result : results) {
                 if (result.getFailure() == null) {
