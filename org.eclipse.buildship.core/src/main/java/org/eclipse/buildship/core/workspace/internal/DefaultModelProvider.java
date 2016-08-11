@@ -26,11 +26,11 @@ import org.eclipse.buildship.core.workspace.ModelProvider;
  *
  * @author Stefan Oehme
  */
-final class DefaulteModelProvider extends AbstractModelProvider implements ModelProvider {
+final class DefaultModelProvider extends AbstractModelProvider implements ModelProvider {
 
     private final CompositeBuildModelRepository modelRepository;
 
-    public DefaulteModelProvider(CompositeBuildModelRepository modelRepository) {
+    public DefaultModelProvider(CompositeBuildModelRepository modelRepository) {
         this.modelRepository = Preconditions.checkNotNull(modelRepository);
     }
 

@@ -50,7 +50,7 @@ public class DefaultGradleBuild implements GradleBuild {
     @Override
     public ModelProvider getModelProvider() {
         CompositeBuildModelRepository modelRepository = CorePlugin.modelRepositoryProvider().getCompositeModelRepository(ImmutableSet.of(this.build));
-        return new DefaulteModelProvider(modelRepository);
+        return new DefaultModelProvider(modelRepository);
     }
 
     FixedRequestAttributes getBuild() {
