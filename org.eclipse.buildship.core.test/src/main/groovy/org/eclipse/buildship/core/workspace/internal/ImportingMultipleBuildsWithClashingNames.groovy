@@ -23,8 +23,12 @@ class ImportingMultipleBuildsWithClashingNames extends ProjectSynchronizationSpe
         findProject('root')
     }
 
-    def "Same subproject names interrupt the project synchronization"() {
+    def "Same subproject names in different builds interrupt the project synchronization"() {
         setup:
+        Logger logger = Mock(Logger)
+        registerService(Logger, logger)
+        registerService(UserNotification, Mock(UserNotification)) // suppress exception from test output
+
         def firstProject = dir('first') {
             dir 'sub/subsub'
             file 'settings.gradle', "include 'sub:subsub'"
@@ -42,12 +46,12 @@ class ImportingMultipleBuildsWithClashingNames extends ProjectSynchronizationSpe
         findProject('first')
         findProject('sub')
         findProject('subsub')
+        0 * logger.error(*_)
 
         when:
         importAndWait(secondProject)
 
         then:
-        // TODO (donat) the exact result is nondeterministic
-        allProjects().size() < 6
+        1 * logger.error(*_)
     }
 }
