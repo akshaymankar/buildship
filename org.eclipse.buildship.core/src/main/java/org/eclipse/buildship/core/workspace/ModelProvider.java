@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @author Stefan Oehme
  */
+//TODO we should refactor this and tooling-commons to allow arbitrary models instead of a fixed set
 public interface ModelProvider {
 
     /**

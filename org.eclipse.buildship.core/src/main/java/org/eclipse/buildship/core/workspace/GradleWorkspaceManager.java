@@ -42,7 +42,8 @@ public interface GradleWorkspaceManager {
     public Optional<GradleBuild> getGradleBuild(IProject project);
 
     /**
-     * Returns a {@link MultipleGradleBuilds} object to execute synchronization in a single task.
+     * Returns an aggregate of Gradle builds. It can be used to perform synchronization on all
+     * participant within the same job.
      * <p/>
      * Non-Gradle projects are ignored.
      *

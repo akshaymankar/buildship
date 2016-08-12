@@ -115,7 +115,7 @@
             description="Runs all the selected Gradle tasks">
       </command>
       <command
-            id="org.eclipse.buildship.ui.commands.rundefaulttasks" 
+            id="org.eclipse.buildship.ui.commands.rundefaulttasks"
             categoryId="org.eclipse.debug.ui.category.run"
             name="Run Gradle Default Tasks"
             description="Runs the default tasks of the selected Gradle project">

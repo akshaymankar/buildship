@@ -128,7 +128,7 @@ final class SynchronizeGradleBuildOperation implements IWorkspaceRunnable {
     };
 
     private void runInWorkspace(IProgressMonitor monitor) throws CoreException {
-     // collect Gradle projects and Eclipse workspace projects to sync
+        // collect Gradle projects and Eclipse workspace projects to sync
         List<OmniEclipseProject> projectsInThisBuild = getProjectsInThisBuild();
         List<IProject> decoupledWorkspaceProjects = getOpenWorkspaceProjectsRemovedFromGradleBuild();
         SubMonitor progress = SubMonitor.convert(monitor, decoupledWorkspaceProjects.size() + projectsInThisBuild.size());

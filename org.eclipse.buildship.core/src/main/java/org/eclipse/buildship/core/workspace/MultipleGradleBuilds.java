@@ -9,7 +9,7 @@
 package org.eclipse.buildship.core.workspace;
 
 /**
- * An aggregate of some {@link GradleBuild} instances.
+ * An aggregate of Gradle builds.
  *
  * @author Donat Csikos
  */

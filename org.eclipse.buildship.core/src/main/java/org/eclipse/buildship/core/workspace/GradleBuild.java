@@ -23,43 +23,39 @@ import org.eclipse.buildship.core.util.progress.AsyncHandler;
  */
 
 /**
- * A set of {@link OldGradleBuild}s that are built together.
+ * A Gradle build.
  *
  * @author Stefan Oehme
- *
  */
 public interface GradleBuild {
 
     /**
-     * Attempts to synchronize all contained builds with the workspace.
+     * Attempts to synchronize the build with the workspace.
      * <p/>
      * The synchronization happens asynchronously. In case of a failure, the user will be notified
-     * once after all builds have finished.
+     * once after the build has finished.
      * <p/>
-     * This is equivalent to calling
-     * {@code synchronize(NewProjectHandler.NO_OP)}
-     *
+     * This is equivalent to calling {@code synchronize(NewProjectHandler.NO_OP)}
      */
     void synchronize();
 
     /**
-     * Attempts to synchronize all contained builds with the workspace.
+     * Attempts to synchronize the build with the workspace.
      * <p/>
      * The synchronization happens asynchronously. In case of a failure, the user will be notified
-     * once after all builds have finished.
+     * once the build has finished.
      * <p/>
      * This is equivalent to calling {@code synchronize(newProjectHandler, AsyncHandler.NO_OP)}
-     *
      *
      * @param newProjectHandler how to handle newly added projects
      */
     void synchronize(NewProjectHandler newProjectHandler);
 
     /**
-     * Attempts to synchronize all contained builds with the workspace.
+     * Attempts to synchronize the build with the workspace.
      * <p/>
      * The synchronization happens asynchronously. In case of a failure, the user will be notified
-     * once after all builds have finished.
+     * once the build has finished.
      *
      * @param newProjectHandler how to handle newly added projects
      * @param initializer an initializer to run before synchronization, e.g. to create a new project
@@ -67,7 +63,7 @@ public interface GradleBuild {
     void synchronize(NewProjectHandler newProjectHandler, AsyncHandler initializer);
 
     /**
-     * Returns the model provider for this composite build.
+     * Returns the model provider for this build.
      *
      * @return the model provider, never null
      */
