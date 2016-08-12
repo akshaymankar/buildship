@@ -66,7 +66,7 @@ public final class SynchronizeGradleBuildJob extends ToolingApiJob {
 
         this.initializer.run(progress.newChild(1), getToken());
 
-        for (DefaultGradleBuild build : this.builds){
+        for (DefaultGradleBuild build : this.builds) {
             if (monitor.isCanceled()) {
                 throw new OperationCanceledException();
             }
