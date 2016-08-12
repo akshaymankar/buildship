@@ -15,10 +15,10 @@ class MergingSynchronizeGradleBuildsJobs extends ProjectSynchronizationSpecifica
             file 'settings.gradle'
         }
         def requestAttributes = new FixedRequestAttributes(projectLocation, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild = new DefaultGradleBuild(requestAttributes)
+        def gradleBuild = new DefaultGradleBuild(requestAttributes)
         def jobs = [
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP),
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP)
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP),
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP)
         ]
 
         when:
@@ -35,10 +35,10 @@ class MergingSynchronizeGradleBuildsJobs extends ProjectSynchronizationSpecifica
             file 'settings.gradle'
         }
         def requestAttributes = new FixedRequestAttributes(projectLocation, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild = new DefaultGradleBuild(requestAttributes)
+        def gradleBuild = new DefaultGradleBuild(requestAttributes)
         def jobs = [
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP),
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.NO_OP, AsyncHandler.NO_OP)
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP),
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.NO_OP, AsyncHandler.NO_OP)
         ]
 
         when:
@@ -55,10 +55,10 @@ class MergingSynchronizeGradleBuildsJobs extends ProjectSynchronizationSpecifica
             file 'settings.gradle'
         }
         def requestAttributes = new FixedRequestAttributes(projectLocation, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild = new DefaultGradleBuild(requestAttributes)
+        def gradleBuild = new DefaultGradleBuild(requestAttributes)
         def jobs = [
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP),
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_OVERWRITE, AsyncHandler.NO_OP)
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP),
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_OVERWRITE, AsyncHandler.NO_OP)
         ]
 
         when:
@@ -75,10 +75,10 @@ class MergingSynchronizeGradleBuildsJobs extends ProjectSynchronizationSpecifica
             file 'settings.gradle'
         }
         def requestAttributes = new FixedRequestAttributes(projectLocation, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild = new DefaultGradleBuild(requestAttributes)
+        def gradleBuild = new DefaultGradleBuild(requestAttributes)
         def jobs = [
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, {monitor, token -> "Foo"}),
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP)
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, {monitor, token -> "Foo"}),
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, AsyncHandler.NO_OP)
         ]
 
         when:
@@ -95,10 +95,10 @@ class MergingSynchronizeGradleBuildsJobs extends ProjectSynchronizationSpecifica
             file 'settings.gradle'
         }
         def requestAttributes = new FixedRequestAttributes(projectLocation, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild = new DefaultGradleBuild(requestAttributes)
+        def gradleBuild = new DefaultGradleBuild(requestAttributes)
         def jobs = [
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, {monitor, token -> "Foo"}),
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild, NewProjectHandler.IMPORT_AND_MERGE, {monitor, token -> "Bar"})
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, {monitor, token -> "Foo"}),
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild, NewProjectHandler.IMPORT_AND_MERGE, {monitor, token -> "Bar"})
         ]
 
         when:
@@ -114,12 +114,12 @@ class MergingSynchronizeGradleBuildsJobs extends ProjectSynchronizationSpecifica
         File project1 = dir("project1")
         File project2 = dir("project2")
         def attributes1 = new FixedRequestAttributes(project1, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild1 = new DefaultGradleBuild(attributes1)
+        def gradleBuild1 = new DefaultGradleBuild(attributes1)
         def attributes2 = new FixedRequestAttributes(project2, null, GradleDistribution.fromBuild(), null, [], [])
-        def compositeBuild2 = new DefaultGradleBuild(attributes2)
+        def gradleBuild2 = new DefaultGradleBuild(attributes2)
         def jobs = [
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild1, NewProjectHandler.NO_OP, AsyncHandler.NO_OP),
-            new SynchronizeMultipleGradleBuildsJob(compositeBuild2, NewProjectHandler.NO_OP, AsyncHandler.NO_OP)
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild1, NewProjectHandler.NO_OP, AsyncHandler.NO_OP),
+            new SynchronizeMultipleGradleBuildsJob(gradleBuild2, NewProjectHandler.NO_OP, AsyncHandler.NO_OP)
         ]
 
         when:

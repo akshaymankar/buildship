@@ -48,7 +48,7 @@ public class DefaultGradleWorkspaceManager implements GradleWorkspaceManager {
     }
 
     @Override
-    public MultipleGradleBuilds getGradleBuilds(Set<IProject> projects) {
+    public MultipleGradleBuilds getMultipleGradleBuilds(Set<IProject> projects) {
         return new DefaultMultipleGradleBuilds(getBuilds(projects));
     }
 

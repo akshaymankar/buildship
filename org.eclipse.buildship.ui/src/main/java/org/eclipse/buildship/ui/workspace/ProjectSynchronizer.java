@@ -49,7 +49,7 @@ public final class ProjectSynchronizer {
             return;
         }
 
-        MultipleGradleBuilds gradleBuilds = CorePlugin.gradleWorkspaceManager().getGradleBuilds(selectedProjects);
+        MultipleGradleBuilds gradleBuilds = CorePlugin.gradleWorkspaceManager().getMultipleGradleBuilds(selectedProjects);
         gradleBuilds.synchronize(NewProjectHandler.IMPORT_AND_MERGE);
     }
 

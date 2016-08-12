@@ -1,7 +1,5 @@
 package org.eclipse.buildship.core.test.fixtures
 
-import groovy.transform.CompileStatic;
-
 import com.google.common.util.concurrent.FutureCallback
 
 import com.gradleware.tooling.toolingclient.GradleDistribution
@@ -41,7 +39,7 @@ abstract class ProjectSynchronizationSpecification extends WorkspaceSpecificatio
     }
 
     protected void synchronizeAndWait(IProject... projects) {
-        CorePlugin.gradleWorkspaceManager().getGradleBuilds(projects as Set).synchronize(NewProjectHandler.IMPORT_AND_MERGE)
+        CorePlugin.gradleWorkspaceManager().getMultipleGradleBuilds(projects as Set).synchronize(NewProjectHandler.IMPORT_AND_MERGE)
         waitForGradleJobsToFinish()
     }
 
