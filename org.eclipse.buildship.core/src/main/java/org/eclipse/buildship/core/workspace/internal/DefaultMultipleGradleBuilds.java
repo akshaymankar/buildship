@@ -36,7 +36,7 @@ public class DefaultMultipleGradleBuilds implements MultipleGradleBuilds {
 
     @Override
     public void synchronize(NewProjectHandler newProjectHandler) {
-        new SynchronizeMultipleGradleBuildsJob(this.gradleBuilds, newProjectHandler, AsyncHandler.NO_OP).schedule();
+        SynchronizeGradleBuildJob.forMultipleGradleBuilds(this.gradleBuilds, newProjectHandler, AsyncHandler.NO_OP).schedule();
     }
 
 }

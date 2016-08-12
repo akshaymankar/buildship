@@ -40,17 +40,13 @@ import org.eclipse.buildship.core.workspace.NewProjectHandler;
 /**
  * Synchronizes each of the given Gradle builds with the workspace.
  */
-public final class SynchronizeMultipleGradleBuildsJob extends ToolingApiJob {
+public final class SynchronizeGradleBuildJob extends ToolingApiJob {
 
     private final List<DefaultGradleBuild> builds;
     private final NewProjectHandler newProjectHandler;
     private final AsyncHandler initializer;
 
-    public SynchronizeMultipleGradleBuildsJob(DefaultGradleBuild build, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
-        this(Arrays.asList(build), newProjectHandler, initializer);
-    }
-
-    public SynchronizeMultipleGradleBuildsJob(List<DefaultGradleBuild> builds, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
+    private SynchronizeGradleBuildJob(List<DefaultGradleBuild> builds, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
         super("Synchronize Gradle projects with workspace", true);
         this.builds = ImmutableList.copyOf(builds);
         this.newProjectHandler = Preconditions.checkNotNull(newProjectHandler);
@@ -82,7 +78,7 @@ public final class SynchronizeMultipleGradleBuildsJob extends ToolingApiJob {
         progress.setTaskName((String.format("Synchronizing Gradle build at %s with workspace", build.getBuild().getProjectDir())));
         progress.setWorkRemaining(2);
         Set<OmniEclipseProject> allProjects = fetchEclipseProjects(build, progress.newChild(1));
-        new SynchronizeGradleBuildOperation(allProjects, build.getBuild(), SynchronizeMultipleGradleBuildsJob.this.newProjectHandler).run(progress.newChild(1));
+        new SynchronizeGradleBuildOperation(allProjects, build.getBuild(), SynchronizeGradleBuildJob.this.newProjectHandler).run(progress.newChild(1));
     }
 
     private Set<OmniEclipseProject> fetchEclipseProjects(DefaultGradleBuild build, SubMonitor progress) {
@@ -123,15 +119,24 @@ public final class SynchronizeMultipleGradleBuildsJob extends ToolingApiJob {
     @Override
     public boolean shouldSchedule() {
         for (Job job : Job.getJobManager().find(CorePlugin.GRADLE_JOB_FAMILY)) {
-            if (job instanceof SynchronizeMultipleGradleBuildsJob && isCoveredBy((SynchronizeMultipleGradleBuildsJob) job)) {
+            if (job instanceof SynchronizeGradleBuildJob && isCoveredBy((SynchronizeGradleBuildJob) job)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean isCoveredBy(SynchronizeMultipleGradleBuildsJob other) {
+    private boolean isCoveredBy(SynchronizeGradleBuildJob other) {
         return Objects.equal(this.builds, other.builds) && (this.newProjectHandler == NewProjectHandler.NO_OP || Objects.equal(this.newProjectHandler, other.newProjectHandler))
                 && (this.initializer == AsyncHandler.NO_OP || Objects.equal(this.initializer, other.initializer));
     }
+
+    public static SynchronizeGradleBuildJob forSingleGradleBuild(DefaultGradleBuild build, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
+        return new SynchronizeGradleBuildJob(Arrays.asList(build), newProjectHandler, initializer);
+    }
+
+    public static SynchronizeGradleBuildJob forMultipleGradleBuilds(List<DefaultGradleBuild> builds, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
+        return new SynchronizeGradleBuildJob(builds, newProjectHandler, initializer);
+    }
+
 }
