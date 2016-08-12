@@ -77,7 +77,7 @@ class SynchronizingRenamedProject extends ProjectSynchronizationSpecification {
         findProject("b").location.lastSegment() == "a"
     }
 
-    @Ignore("TODO (donat) check back here")
+    @Ignore("Adjust this once composites can be imported")
     def "Projects can be renamed in cycles across the workspace"() {
         setup:
         def first = dir('first') {

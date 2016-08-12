@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.JavaCore
 
 import org.eclipse.buildship.core.test.fixtures.ProjectSynchronizationSpecification
 
-@Ignore("TODO (donat) reimplement this class")
+@Ignore("TODO (donat) reimplement this class once we can import composites")
 class SynchronizingMultipleBuilds extends ProjectSynchronizationSpecification {
 
     def "If there are no name clashes, no de-duplication is done"() {
