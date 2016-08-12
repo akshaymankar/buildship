@@ -23,7 +23,7 @@ class ImportingMultipleBuildsWithClashingNames extends ProjectSynchronizationSpe
         findProject('root')
     }
 
-    def "Same subproject names are deduped"() {
+    def "Same subproject names interrupt the project synchronization"() {
         setup:
         def firstProject = dir('first') {
             dir 'sub/subsub'
@@ -47,12 +47,7 @@ class ImportingMultipleBuildsWithClashingNames extends ProjectSynchronizationSpe
         importAndWait(secondProject)
 
         then:
-        allProjects().size() == 6
-        findProject('first')
-        findProject('first-sub')
-        findProject('first-sub-subsub')
-        findProject('second')
-        findProject('second-sub')
-        findProject('second-sub-subsub')
+        // TODO (donat) the exact result is nondeterministic
+        allProjects().size() < 6
     }
 }

@@ -265,9 +265,6 @@ subprojects {
             }
             bundled "org.slf4j:slf4j-simple:$slf4jLibVersion"
         }
-        
-        // don't execute the test on this experimental feature branch
-        tasks.eclipseTest.onlyIf { false } 
     }
 
     // apply Checkstyle plugin, mainly to ensure license/copyright and javadoc is present
