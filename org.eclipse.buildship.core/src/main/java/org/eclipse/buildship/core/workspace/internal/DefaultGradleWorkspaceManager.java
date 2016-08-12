@@ -7,16 +7,23 @@
  */
 package org.eclipse.buildship.core.workspace.internal;
 
+import java.util.Set;
+
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.FluentIterable;
 
 import com.gradleware.tooling.toolingmodel.repository.FixedRequestAttributes;
 
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.buildship.core.CorePlugin;
+import org.eclipse.buildship.core.configuration.GradleProjectNature;
 import org.eclipse.buildship.core.configuration.ProjectConfiguration;
 import org.eclipse.buildship.core.workspace.GradleBuild;
 import org.eclipse.buildship.core.workspace.GradleWorkspaceManager;
+import org.eclipse.buildship.core.workspace.MultipleGradleBuilds;
 
 /**
  * Default implementation of {@link GradleWorkspaceManager}.
@@ -38,6 +45,22 @@ public class DefaultGradleWorkspaceManager implements GradleWorkspaceManager {
         } else {
             return Optional.absent();
         }
+    }
+
+    @Override
+    public MultipleGradleBuilds getGradleBuilds(Set<IProject> projects) {
+        return new DefaultMultipleGradleBuilds(getBuilds(projects));
+    }
+
+    private Set<FixedRequestAttributes> getBuilds(Set<IProject> projects) {
+        return FluentIterable.from(projects).filter(GradleProjectNature.isPresentOn()).transform(new Function<IProject, FixedRequestAttributes>() {
+
+            @Override
+            public FixedRequestAttributes apply(IProject project) {
+                Optional<ProjectConfiguration> configuration = CorePlugin.projectConfigurationManager().tryReadProjectConfiguration(project);
+                return configuration.isPresent() ? configuration.get().toRequestAttributes() : null;
+            }
+        }).filter(Predicates.notNull()).toSet();
     }
 
 }

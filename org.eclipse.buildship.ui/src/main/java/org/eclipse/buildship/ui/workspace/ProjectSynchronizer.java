@@ -16,7 +16,6 @@ package org.eclipse.buildship.ui.workspace;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -32,9 +31,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.buildship.core.CorePlugin;
-import org.eclipse.buildship.core.configuration.GradleProjectNature;
 import org.eclipse.buildship.core.util.collections.AdapterFunction;
-import org.eclipse.buildship.core.workspace.GradleBuild;
+import org.eclipse.buildship.core.workspace.MultipleGradleBuilds;
 import org.eclipse.buildship.core.workspace.NewProjectHandler;
 
 /**
@@ -46,24 +44,13 @@ import org.eclipse.buildship.core.workspace.NewProjectHandler;
 public final class ProjectSynchronizer {
 
     public static void execute(final ExecutionEvent event) {
-        // TODO (donat) add a small job here and call GynchronizeGradleBuildOperations for each selected projects
-
         Set<IProject> selectedProjects = collectSelectedProjects(event);
         if (selectedProjects.isEmpty()) {
             return;
         }
 
-        Set<GradleBuild> gradleBuilds = Sets.newLinkedHashSet();
-        for (IProject selecteProject : selectedProjects) {
-            Optional<GradleBuild> gradleBuild = CorePlugin.gradleWorkspaceManager().getGradleBuild(selecteProject);
-            if (gradleBuild.isPresent()) {
-                gradleBuilds.add(gradleBuild.get());
-            }
-        }
-
-        for (GradleBuild gradleBuild : gradleBuilds) {
-            gradleBuild.synchronize(NewProjectHandler.IMPORT_AND_MERGE);
-        }
+        MultipleGradleBuilds gradleBuilds = CorePlugin.gradleWorkspaceManager().getGradleBuilds(selectedProjects);
+        gradleBuilds.synchronize(NewProjectHandler.IMPORT_AND_MERGE);
     }
 
     private static Set<IProject> collectSelectedProjects(ExecutionEvent event) {
@@ -88,10 +75,7 @@ public final class ProjectSynchronizer {
         for (Object candidate : candidates) {
             IResource resource = adapterFunction.apply(candidate);
             if (resource != null) {
-                IProject project = resource.getProject();
-                if (GradleProjectNature.isPresentOn(project)) {
-                    projects.add(project);
-                }
+                projects.add(resource.getProject());
             }
         }
         return projects;

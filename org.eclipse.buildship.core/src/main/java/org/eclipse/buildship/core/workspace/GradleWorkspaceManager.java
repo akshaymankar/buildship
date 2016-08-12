@@ -8,6 +8,8 @@
 
 package org.eclipse.buildship.core.workspace;
 
+import java.util.Set;
+
 import com.google.common.base.Optional;
 
 import com.gradleware.tooling.toolingmodel.repository.FixedRequestAttributes;
@@ -27,7 +29,6 @@ public interface GradleWorkspaceManager {
      * @param attributes the request attributes, must not be null
      * @return the Gradle build, never null
      */
-
     public GradleBuild getGradleBuild(FixedRequestAttributes attributes);
 
     /**
@@ -40,4 +41,14 @@ public interface GradleWorkspaceManager {
      */
     public Optional<GradleBuild> getGradleBuild(IProject project);
 
+    /**
+     * Returns a {@link MultipleGradleBuilds} object to obtain models and execute synchronization
+     * as part of a single task.
+     * <p/>
+     * Non-Gradle projects are ignored.
+     *
+     * @param projects the projects for which to find the corresponding builds
+     * @return the build aggregate, never null
+     */
+    public MultipleGradleBuilds getGradleBuilds(Set<IProject> projects);
 }

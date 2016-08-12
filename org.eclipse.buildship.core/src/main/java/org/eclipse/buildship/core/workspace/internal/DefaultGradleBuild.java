@@ -45,7 +45,7 @@ public class DefaultGradleBuild implements GradleBuild {
     }
     @Override
     public void synchronize(NewProjectHandler newProjectHandler, AsyncHandler initializer) {
-        new SynchronizeGradleBuildJob(this, newProjectHandler, initializer).schedule();
+        new SynchronizeMultipleGradleBuildsJob(this, newProjectHandler, initializer).schedule();
     }
 
     @Override

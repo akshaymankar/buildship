@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2015 the original author or authors.
+ * Copyright (c) 2016 the original author or authors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Etienne Studer & Donát Csikós (Gradle Inc.) - initial API and implementation and initial documentation
  */
 
 package org.eclipse.buildship.core.workspace.internal;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.gradle.tooling.connection.ModelResult;
@@ -18,13 +17,16 @@ import org.gradle.tooling.connection.ModelResults;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 import com.gradleware.tooling.toolingmodel.OmniEclipseProject;
 import com.gradleware.tooling.toolingmodel.repository.FetchStrategy;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -36,17 +38,21 @@ import org.eclipse.buildship.core.workspace.ModelProvider;
 import org.eclipse.buildship.core.workspace.NewProjectHandler;
 
 /**
- * Synchronizes the given composite build with the workspace.
+ * Synchronizes each of the given Gradle builds with the workspace.
  */
-final class SynchronizeGradleBuildJob extends ToolingApiJob {
+public final class SynchronizeMultipleGradleBuildsJob extends ToolingApiJob {
 
-    private final DefaultGradleBuild build;
+    private final List<DefaultGradleBuild> builds;
     private final NewProjectHandler newProjectHandler;
     private final AsyncHandler initializer;
 
-    public SynchronizeGradleBuildJob(DefaultGradleBuild build, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
+    public SynchronizeMultipleGradleBuildsJob(DefaultGradleBuild build, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
+        this(Arrays.asList(build), newProjectHandler, initializer);
+    }
+
+    public SynchronizeMultipleGradleBuildsJob(List<DefaultGradleBuild> builds, NewProjectHandler newProjectHandler, AsyncHandler initializer) {
         super("Synchronize Gradle projects with workspace", true);
-        this.build = Preconditions.checkNotNull(build);
+        this.builds = ImmutableList.copyOf(builds);
         this.newProjectHandler = Preconditions.checkNotNull(newProjectHandler);
         this.initializer = Preconditions.checkNotNull(initializer);
 
@@ -60,18 +66,28 @@ final class SynchronizeGradleBuildJob extends ToolingApiJob {
 
     @Override
     protected void runToolingApiJob(IProgressMonitor monitor) throws Exception {
-        final SubMonitor progress = SubMonitor.convert(monitor, 3);
+        final SubMonitor progress = SubMonitor.convert(monitor, this.builds.size() + 1);
 
         this.initializer.run(progress.newChild(1), getToken());
-        final Set<OmniEclipseProject> allProjects = fetchEclipseProjects(progress.newChild(1));
 
-        new SynchronizeGradleBuildOperation(allProjects, SynchronizeGradleBuildJob.this.build.getBuild(), SynchronizeGradleBuildJob.this.newProjectHandler)
-            .run(progress.newChild(1));
+        for (DefaultGradleBuild build : this.builds){
+            if (monitor.isCanceled()) {
+                throw new OperationCanceledException();
+            }
+            synchronizeBuild(build, progress.newChild(1));
+        }
     }
 
-    private Set<OmniEclipseProject> fetchEclipseProjects(SubMonitor progress) {
+    private void synchronizeBuild(DefaultGradleBuild build, SubMonitor progress) throws CoreException {
+        progress.setTaskName((String.format("Synchronizing Gradle build at %s with workspace", build.getBuild().getProjectDir())));
+        progress.setWorkRemaining(2);
+        Set<OmniEclipseProject> allProjects = fetchEclipseProjects(build, progress.newChild(1));
+        new SynchronizeGradleBuildOperation(allProjects, build.getBuild(), SynchronizeMultipleGradleBuildsJob.this.newProjectHandler).run(progress.newChild(1));
+    }
+
+    private Set<OmniEclipseProject> fetchEclipseProjects(DefaultGradleBuild build, SubMonitor progress) {
         progress.setTaskName("Loading Gradle project models");
-        ModelProvider modelProvider = this.build.getModelProvider();
+        ModelProvider modelProvider = build.getModelProvider();
         ModelResults<OmniEclipseProject> results = modelProvider.fetchEclipseProjects(FetchStrategy.FORCE_RELOAD, getToken(), progress);
 
         Set<OmniEclipseProject> allProjects = Sets.newLinkedHashSet();
@@ -107,16 +123,15 @@ final class SynchronizeGradleBuildJob extends ToolingApiJob {
     @Override
     public boolean shouldSchedule() {
         for (Job job : Job.getJobManager().find(CorePlugin.GRADLE_JOB_FAMILY)) {
-            if (job instanceof SynchronizeGradleBuildJob && isCoveredBy((SynchronizeGradleBuildJob) job)) {
+            if (job instanceof SynchronizeMultipleGradleBuildsJob && isCoveredBy((SynchronizeMultipleGradleBuildsJob) job)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean isCoveredBy(SynchronizeGradleBuildJob other) {
-        return Objects.equal(this.build, other.build) && (this.newProjectHandler == NewProjectHandler.NO_OP || Objects.equal(this.newProjectHandler, other.newProjectHandler))
+    private boolean isCoveredBy(SynchronizeMultipleGradleBuildsJob other) {
+        return Objects.equal(this.builds, other.builds) && (this.newProjectHandler == NewProjectHandler.NO_OP || Objects.equal(this.newProjectHandler, other.newProjectHandler))
                 && (this.initializer == AsyncHandler.NO_OP || Objects.equal(this.initializer, other.initializer));
     }
-
 }
