@@ -69,7 +69,6 @@ import org.eclipse.buildship.core.workspace.NewProjectHandler;
  * <li>If the workspace project is open:
  * <ul>
  * <li>the project name is updated</li>
- * <li>the Gradle nature is set</li>
  * <li>the Gradle settings file is written</li>
  * <li>the linked resources are set</li>
  * <li>the derived resources are marked</li>
@@ -196,8 +195,6 @@ final class SynchronizeGradleBuildOperation implements IWorkspaceRunnable {
         CorePlugin.workspaceOperations().refreshProject(workspaceProject, progress.newChild(1));
 
         workspaceProject = ProjectNameUpdater.updateProjectName(workspaceProject, project, this.gradleBuild, progress.newChild(1));
-
-        CorePlugin.workspaceOperations().addNature(workspaceProject, GradleProjectNature.ID, progress.newChild(1));
 
         if (this.requestAttributes != null) {
             ProjectConfiguration configuration = ProjectConfiguration.from(this.requestAttributes, project);
